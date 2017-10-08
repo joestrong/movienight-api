@@ -1,0 +1,12 @@
+app:
+  build: ./docker/app
+  ports:
+   - 80:80
+  links:
+   - php
+  volumes:
+   - .:/web
+php:
+  image: php:7.1-fpm
+  volumes:
+   - .:/web
