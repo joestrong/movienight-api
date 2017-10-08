@@ -19,7 +19,9 @@ class MoviesController extends Controller
         $movies = $this->movies->getTop(30);
         $return = [];
         foreach ($movies as $movie) {
-            array_push($return, $movie->getTitle());
+            array_push($return, [
+                'title' => $movie->getTitle(),
+            ]);
         }
         return response()->json($return);
     }
