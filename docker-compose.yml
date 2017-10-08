@@ -1,7 +1,5 @@
 app:
   build: ./docker/app
-  ports:
-   - 80:80
   links:
    - php
   volumes:
