@@ -15,4 +15,7 @@ $router->get('/', function () use ($router) {
     return response()->json([]);
 });
 
-$router->get('/movies', ['uses' => 'MoviesController@index']);
+$router->get('/movies', [
+    'middleware' => 'auth',
+    'uses' => 'MoviesController@index'
+]);
