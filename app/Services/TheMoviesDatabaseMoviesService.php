@@ -2,7 +2,6 @@
 
 class TheMoviesDatabaseMoviesService
 {
-
     protected $client;
     protected $repository;
 
