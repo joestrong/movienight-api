@@ -15,4 +15,14 @@ class UserService
     {
         return $this->userRepo->getByToken($token);
     }
+
+    public function getByFacebookId(string $id): User
+    {
+        return $this->userRepo->getByFacebookId($id);
+    }
+
+    public function getTokenForUser(User $user): string
+    {
+        return $this->userRepo->getTokenForUser($user);
+    }
 }

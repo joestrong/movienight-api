@@ -15,6 +15,9 @@ $router->get('/', function () use ($router) {
     return response()->json([]);
 });
 
+$router->get('auth/login', 'LoginController@redirectToProvider');
+$router->get('auth/login/callback', 'LoginController@handleProviderCallback');
+
 $router->get('/movies', [
     'middleware' => 'auth',
     'uses' => 'MoviesController@index'

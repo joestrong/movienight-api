@@ -14,7 +14,7 @@ class UserServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(UserRepository::class, function() {
+        $this->app->bind(UserRepository::class, function () {
             return new EloquentUserRepository(new User());
         });
     }

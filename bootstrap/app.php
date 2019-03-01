@@ -23,9 +23,11 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-// $app->withFacades();
+$app->withFacades();
 
- $app->withEloquent();
+$app->withEloquent();
+
+$app->configure('services');
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +84,7 @@ $app->routeMiddleware([
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Users\Providers\UserServiceProvider::class);
+$app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
