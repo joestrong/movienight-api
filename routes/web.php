@@ -15,8 +15,7 @@ $router->get('/', function () use ($router) {
     return response()->json([]);
 });
 
-$router->get('auth/login', 'LoginController@redirectToProvider');
-$router->get('auth/login/callback', 'LoginController@handleProviderCallback');
+$router->post('auth/exchange/facebook', 'LoginController@exchangeFacebookToken');
 
 $router->get('/movies', [
     'middleware' => 'auth',

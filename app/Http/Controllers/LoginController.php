@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
+use App\Http\Requests\ExchangeFacebookTokenRequest;
+use App\Users\Exceptions\InvalidFacebookTokenException;
+use App\Users\Exceptions\UserNotFoundException;
 use App\Users\UserService;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -13,17 +16,23 @@ class LoginController extends Controller
     {
         $this->userService = $userService;
     }
-    
-    public function redirectToProvider(): RedirectResponse
-    {
-        return Socialite::driver('facebook')->stateless()->redirect();
-    }
 
-    public function handleProviderCallback(): JsonResponse
+    public function exchangeFacebookToken(ExchangeFacebookTokenRequest $request): JsonResponse
     {
-        $facebookUser = Socialite::driver('facebook')->stateless()->user();
+        $facebookToken = $request->json()->get('token');
 
-        $user = $this->userService->getByFacebookId($facebookUser->id);
+        try {
+            $facebookUser = Socialite::driver('facebook')->userFromToken($facebookToken);
+        } catch (ClientException $e) {
+            throw new InvalidFacebookTokenException();
+        }
+        
+        try {
+            $user = $this->userService->getByFacebookId($facebookUser->id);
+        } catch (UserNotFoundException $e) {
+            // todo Create new account from Facebook
+            throw new UserNotFoundException();
+        }
         
         return response()->json([
             'token' => $this->userService->getTokenForUser($user),

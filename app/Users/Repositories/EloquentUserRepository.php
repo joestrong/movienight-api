@@ -1,8 +1,10 @@
 <?php namespace App\Users\Repositories;
 
+use App\Users\Exceptions\UserNotFoundException;
 use App\Users\Factories\UserFactory;
 use App\Users\Models\User as UserModel;
 use App\Users\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EloquentUserRepository implements UserRepository
 {
@@ -24,9 +26,13 @@ class EloquentUserRepository implements UserRepository
 
     public function getByFacebookId(string $id): User
     {
-        $userModel = $this->model
-            ->where('facebook_id', $id)
-            ->firstOrFail();
+        try {
+            $userModel = $this->model
+                ->where('facebook_id', $id)
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
 
         return UserFactory::fromState($userModel->toArray());
     }
