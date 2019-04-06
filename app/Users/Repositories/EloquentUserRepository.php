@@ -44,4 +44,12 @@ class EloquentUserRepository implements UserRepository
         
         return $userModel->api_token;
     }
+
+    public function create(array $attributes): User
+    {
+        $userModel = $this->model->create($attributes);
+        $userModel->find($userModel->id);
+        
+        return UserFactory::fromState($userModel->toArray());
+    }
 }

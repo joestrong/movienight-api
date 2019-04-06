@@ -9,4 +9,6 @@ interface UserRepository
     public function getByFacebookId(string $id): User;
     
     public function getTokenForUser(User $user): string;
+
+    public function create(array $attributes): User;
 }

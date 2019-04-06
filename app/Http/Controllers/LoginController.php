@@ -30,8 +30,7 @@ class LoginController extends Controller
         try {
             $user = $this->userService->getByFacebookId($facebookUser->id);
         } catch (UserNotFoundException $e) {
-            // todo Create new account from Facebook
-            throw new UserNotFoundException();
+            $user = $this->userService->createFromFacebook($facebookUser);
         }
         
         return response()->json([
