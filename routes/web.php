@@ -11,13 +11,16 @@
 |
 */
 
+use Laravel\Lumen\Routing\Router;
+
 $router->get('/', function () use ($router) {
     return response()->json([]);
 });
 
 $router->post('auth/exchange/facebook', 'LoginController@exchangeFacebookToken');
 
-$router->get('/movies', [
-    'middleware' => 'auth',
-    'uses' => 'MoviesController@index'
-]);
+$router->group(['middleware' => 'auth'], function(Router $router) {
+    $router->get('/movies', [
+        'uses' => 'MoviesController@index'
+    ]);
+});
