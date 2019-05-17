@@ -10,7 +10,8 @@
         "vlucas/phpdotenv": "~2.2",
         "php-tmdb/api": "^2.1",
         "friendsofphp/php-cs-fixer": "^2.14",
-        "laravel/socialite": "^4.1"
+        "laravel/socialite": "^4.1",
+        "spatie/laravel-fractal": "^5.5"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

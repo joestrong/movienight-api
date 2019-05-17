@@ -1,0 +1,34 @@
+<?php namespace App\Movies;
+
+class MovieService
+{
+    public function __construct()
+    {
+        $this->movies = new \App\Services\TheMoviesDatabaseMoviesService();
+    }
+
+    public function getTop(int $limit = 10)
+    {
+        $movieData = $this->movies->getTop($limit);
+        
+        return collect($movieData)
+            ->values()
+            ->map(function ($data): Movie {
+                $movie = new Movie();
+                $movie->setTitle($data->getTitle());
+                $movie->setPosterImage(
+                    $this->getPosterPath() .
+                    $data->getPosterImage()->getFilePath()
+                );
+                
+                return $movie;
+            });
+    }
+
+    public function getPosterPath()
+    {
+        $imageConfig = $this->movies->getConfig()->getImages();
+
+        return $imageConfig['secure_base_url'] . $imageConfig['poster_sizes'][4];
+    }
+}
