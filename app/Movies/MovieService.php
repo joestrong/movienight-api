@@ -1,5 +1,7 @@
 <?php namespace App\Movies;
 
+use Tmdb\Model\Movie as TmdMovie;
+
 class MovieService
 {
     public function __construct()
@@ -13,14 +15,18 @@ class MovieService
         
         return collect($movieData)
             ->values()
-            ->map(function ($data): Movie {
+            ->map(function (TmdMovie $data): Movie {
                 $movie = new Movie();
                 $movie->setTitle($data->getTitle());
                 $movie->setPosterImage(
                     $this->getPosterPath() .
                     $data->getPosterImage()->getFilePath()
                 );
-                
+                $movie->setBackdropImage(
+                    $this->getPosterPath() .
+                    $data->getBackdropImage()->getFilePath()
+                );
+
                 return $movie;
             });
     }

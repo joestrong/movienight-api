@@ -10,6 +10,7 @@ class MovieTransformer extends TransformerAbstract
         return [
             'title' => $movie->getTitle(),
             'posterImage' => $movie->getPosterImage(),
+            'backdropImage' => $movie->getBackdropImage(),
         ];
     }
 }
