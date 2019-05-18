@@ -85,6 +85,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Users\Providers\UserServiceProvider::class);
 $app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
+$app->register(\Sentry\Laravel\ServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

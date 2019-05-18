@@ -5,12 +5,13 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
+        "php": "^7.2",
         "laravel/lumen-framework": "5.7.*",
         "vlucas/phpdotenv": "~2.2",
         "php-tmdb/api": "^2.1",
         "friendsofphp/php-cs-fixer": "^2.14",
-        "laravel/socialite": "^4.1"
+        "laravel/socialite": "^4.1",
+        "sentry/sentry-laravel": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
