@@ -10,6 +10,7 @@ class TheMoviesDatabaseMoviesService
         $token  = new \Tmdb\ApiToken('4face5a64cfbebe80a03929b77b1576c');
         $this->client = new \Tmdb\Client($token);
         $this->repository = new \Tmdb\Repository\MovieRepository($this->client);
+        $this->configRepository = new \Tmdb\Repository\ConfigurationRepository($this->client);
     }
 
     public function getTop($count = 10)
@@ -28,5 +29,10 @@ class TheMoviesDatabaseMoviesService
     public function get($id)
     {
         return $this->repository->load($id);
+    }
+
+    public function getConfig()
+    {
+        return $this->configRepository->load();
     }
 }

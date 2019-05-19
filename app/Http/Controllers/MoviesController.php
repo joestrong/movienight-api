@@ -2,27 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Movies\MovieService;
+use App\Movies\Transformers\MovieTransformer;
+
 class MoviesController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    private $movieService;
+
+    public function __construct(MovieService $movieService)
     {
-        $this->movies = new \App\Services\TheMoviesDatabaseMoviesService();
+        $this->movieService = $movieService;
     }
 
     public function index()
     {
-        $movies = $this->movies->getTop(30);
-        $return = [];
-        foreach ($movies as $movie) {
-            array_push($return, [
-                'title' => $movie->getTitle(),
-            ]);
-        }
-        return response()->json($return);
+        $movies = $this->movieService->getTop(30);
+
+        return response()->json(
+            fractal()->collection($movies, new MovieTransformer())
+        );
     }
 }
