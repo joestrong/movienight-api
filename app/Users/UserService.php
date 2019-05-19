@@ -1,5 +1,6 @@
 <?php namespace App\Users;
 
+use App\Users\Exceptions\UserNotFoundException;
 use App\Users\Repositories\UserRepository;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Two\User as FacebookUser;
@@ -36,5 +37,16 @@ class UserService
             'api_token' => hash('sha256', Str::random(60)),
             'facebook_id' => $facebookUser->id,
         ]);
+    }
+
+    public function isTokenValid(string $token): bool
+    {
+        try {
+            $this->getByToken($token);
+            
+            return true;
+        } catch (UserNotFoundException $e) {
+            return false;
+        }
     }
 }

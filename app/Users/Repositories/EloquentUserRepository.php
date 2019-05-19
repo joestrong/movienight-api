@@ -17,9 +17,13 @@ class EloquentUserRepository implements UserRepository
     
     public function getByToken(string $token): User
     {
-        $userModel = $this->model
-            ->where('api_token', $token)
-            ->firstOrFail();
+        try {
+            $userModel = $this->model
+                ->where('api_token', $token)
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
 
         return UserFactory::fromState($userModel->toArray());
     }
