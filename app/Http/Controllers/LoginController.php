@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Requests\ExchangeFacebookTokenRequest;
+use App\Http\Requests\ValidateTokenRequest;
 use App\Users\Exceptions\InvalidFacebookTokenException;
 use App\Users\Exceptions\UserNotFoundException;
 use App\Users\UserService;
@@ -35,6 +36,17 @@ class LoginController extends Controller
         
         return response()->json([
             'token' => $this->userService->getTokenForUser($user),
+        ]);
+    }
+
+    public function validateToken(ValidateTokenRequest $request): JsonResponse
+    {
+        $token = $request->json()->get('token');
+        
+        $validity = $this->userService->isTokenValid($token);
+        
+        return response()->json([
+            'valid' => $validity,
         ]);
     }
 }

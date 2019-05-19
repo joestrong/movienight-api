@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 
-class ExchangeFacebookTokenRequest extends Request
+class ValidateTokenRequest extends Request
 {
     public function rules()
     {

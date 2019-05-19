@@ -19,6 +19,8 @@ $router->get('/', function () use ($router) {
 
 $router->post('auth/exchange/facebook', 'LoginController@exchangeFacebookToken');
 
+$router->post('auth/validate-token', 'LoginController@validateToken');
+
 $router->group(['middleware' => 'auth'], function(Router $router) {
     $router->get('/movies', [
         'uses' => 'MoviesController@index'
