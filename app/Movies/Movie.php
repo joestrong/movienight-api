@@ -16,7 +16,7 @@ class Movie
         $this->title = $title;
     }
 
-    public function getPosterImage(): string
+    public function getPosterImage(): ?string
     {
         return $this->posterImage;
     }
@@ -26,7 +26,7 @@ class Movie
         $this->posterImage = $posterImage;
     }
 
-    public function getBackdropImage(): string
+    public function getBackdropImage(): ?string
     {
         return $this->backdropImage;
     }
