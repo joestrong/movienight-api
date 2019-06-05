@@ -13,6 +13,11 @@ class UserService
     {
         $this->userRepo = $userRepo;
     }
+
+    public function find(int $id): User
+    {
+        return $this->userRepo->find($id);
+    }
     
     public function getByToken(string $token): User
     {

@@ -24,6 +24,14 @@ $router->group(['middleware' => 'auth'], function(Router $router) {
     $router->get('user/my-profile', [
         'uses' => 'UserController@myProfile',
     ]);
+    $router->group(['prefix' => 'users'], function (Router $router) {
+        $router->get('my-profile', [
+            'uses' => 'UserController@myProfile',
+        ]);
+        $router->get('{user_id}', [
+            'uses' => 'UserController@show',
+        ]);
+    });
     $router->group(['prefix' => 'movies'], function (Router $router) {
         $router->get('', [
             'uses' => 'MoviesController@index',

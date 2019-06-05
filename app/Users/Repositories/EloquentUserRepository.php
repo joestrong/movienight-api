@@ -16,6 +16,17 @@ class EloquentUserRepository implements UserRepository
         $this->model = $userModel;
     }
 
+    public function find(int $id): User
+    {
+        try {
+            $userModel = $this->model->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
+        
+        return UserFactory::fromState($userModel->toArray());
+    }
+
     public function getByToken(string $token): User
     {
         try {

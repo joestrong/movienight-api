@@ -2,7 +2,7 @@
 
 use App\Http\Requests\MyProfileRequest;
 use App\Users\UserService;
-use App\Users\Transformers\UserProfileTransformer;
+use App\Users\Transformers\UserTransformer;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -19,7 +19,16 @@ class UserController extends Controller
         $user = Auth::user();
 
         return response()->json(
-            fractal()->item($user, new UserProfileTransformer())
+            fractal()->item($user, new UserTransformer())
+        );
+    }
+
+    public function show(int $userId)
+    {
+        $user = $this->userService->find($userId);
+
+        return response()->json(
+            fractal()->item($user, new UserTransformer())
         );
     }
 }

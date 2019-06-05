@@ -5,6 +5,8 @@ use App\Users\User;
 
 interface UserRepository
 {
+    public function find(int $id): User;
+    
     public function getByToken(string $token): User;
 
     public function getByFacebookId(string $id): User;

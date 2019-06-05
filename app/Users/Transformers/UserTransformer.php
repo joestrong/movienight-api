@@ -3,7 +3,7 @@
 use App\Users\User;
 use League\Fractal\TransformerAbstract;
 
-class UserProfileTransformer extends TransformerAbstract
+class UserTransformer extends TransformerAbstract
 {
     public function transform(User $user)
     {
