@@ -2,9 +2,20 @@
 
 class Movie
 {
+    protected $id;
     protected $title;
     protected $posterImage;
     protected $backdropImage;
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
 
     public function getTitle(): string
     {

@@ -24,7 +24,29 @@ $router->group(['middleware' => 'auth'], function(Router $router) {
     $router->get('user/my-profile', [
         'uses' => 'UserController@myProfile',
     ]);
-    $router->get('movies', [
-        'uses' => 'MoviesController@index',
-    ]);
+    $router->group(['prefix' => 'users'], function (Router $router) {
+        $router->get('my-profile', [
+            'uses' => 'UserController@myProfile',
+        ]);
+        $router->get('{user_id}', [
+            'uses' => 'UserController@show',
+        ]);
+    });
+    $router->group(['prefix' => 'movies'], function (Router $router) {
+        $router->get('', [
+            'uses' => 'MoviesController@index',
+        ]);
+        $router->get('{movie_id}', [
+            'uses' => 'MoviesController@show',
+        ]);
+        $router->post('{movie_id}/seen', [
+            'uses' => 'MoviesController@postSeen',
+        ]);
+        $router->delete('{movie_id}/seen', [
+            'uses' => 'MoviesController@deleteSeen',
+        ]);
+        $router->get('seen/{user_id}', [
+            'uses' => 'MoviesController@seenList',
+        ]);
+    });
 });

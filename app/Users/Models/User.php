@@ -10,4 +10,9 @@ class User extends Model
         'api_token',
         'facebook_id',
     ];
+
+    public function seeables()
+    {
+        return $this->hasMany(UserSeeable::class);
+    }
 }
