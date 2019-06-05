@@ -1,5 +1,6 @@
 <?php namespace App\Movies\Providers;
 
+use App\Movies\Factories\MovieFactory;
 use App\Movies\Repositories\CacheMovieRepository;
 use App\Movies\Repositories\MovieRepository;
 use App\Movies\Repositories\TmdbMovieRepository;
@@ -11,7 +12,9 @@ class MovieServiceProvider extends ServiceProvider
     {
         $this->app->bind(MovieRepository::class, function (): MovieRepository {
             return new CacheMovieRepository(
-                new TmdbMovieRepository()
+                new TmdbMovieRepository(
+                    new MovieFactory()
+                )
             );
         });
     }

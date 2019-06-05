@@ -12,6 +12,11 @@ class MovieService
         $this->movieRepo = $movieRepo;
     }
 
+    public function find(int $id): Movie
+    {
+        return $this->movieRepo->find($id);
+    }
+
     public function getTop(int $limit = 10)
     {
         $movies = $this->movieRepo->getTop($limit);

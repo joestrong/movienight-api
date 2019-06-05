@@ -22,4 +22,13 @@ class MoviesController extends Controller
             fractal()->collection($movies, new MovieTransformer())
         );
     }
+
+    public function show(int $movieId)
+    {
+        $movie = $this->movieService->find($movieId);
+
+        return response()->json(
+            fractal()->item($movie, new MovieTransformer())
+        );
+    }
 }
