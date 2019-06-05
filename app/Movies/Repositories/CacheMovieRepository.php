@@ -26,7 +26,7 @@ class CacheMovieRepository implements MovieRepository
     {
         $length = 60 * 10;
         
-        return Cache::remember('movies.getTop', $length, function () use ($limit): Collection {
+        return Cache::remember('movies.getTop:' . $limit, $length, function () use ($limit): Collection {
             return $this->movieRepo->getTop($limit);
         });
     }

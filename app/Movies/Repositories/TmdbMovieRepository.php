@@ -36,7 +36,8 @@ class TmdbMovieRepository implements MovieRepository
             ->values()
             ->map(function (TmdMovie $data): Movie {
                 return $this->movieFactory->make($data);
-            });
+            })
+            ->take($limit);
     }
 
     public function getConfig()
