@@ -42,5 +42,8 @@ $router->group(['middleware' => 'auth'], function(Router $router) {
         $router->post('{movie_id}/seen', [
             'uses' => 'MoviesController@postSeen',
         ]);
+        $router->get('seen/{user_id}', [
+            'uses' => 'MoviesController@seenList',
+        ]);
     });
 });

@@ -4,8 +4,11 @@ use App\Movies\Movie;
 use App\Users\Exceptions\UserNotFoundException;
 use App\Users\Factories\UserFactory;
 use App\Users\Models\User as UserModel;
+use App\Users\Models\UserSeeable;
+use App\Users\Seenable;
 use App\Users\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 
 class EloquentUserRepository implements UserRepository
 {
@@ -77,5 +80,17 @@ class EloquentUserRepository implements UserRepository
             'seeable_type' => Movie::class,
             'seeable_id' => $movie->getId(),
         ]);
+    }
+
+    public function getSeenList(User $user): Collection
+    {
+        $userModel = $this->model->findOrFail($user->getId());
+
+        return $userModel->seeables->map(function (UserSeeable $userSeeable): Seenable {
+            $seenable = new Seenable();
+            $seenable->setMovieId($userSeeable->seeable_id);
+
+            return $seenable;
+        });
     }
 }

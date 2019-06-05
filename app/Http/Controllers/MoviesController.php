@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Movies\MovieService;
 use App\Movies\Transformers\MovieTransformer;
+use App\Users\UserService;
 use Illuminate\Support\Facades\Auth;
 
 class MoviesController extends Controller
 {
-    private $movieService;
+    protected $movieService;
+    protected $userService;
 
-    public function __construct(MovieService $movieService)
-    {
+    public function __construct(
+        MovieService $movieService,
+        UserService $userService
+    ) {
         $this->movieService = $movieService;
+        $this->userService = $userService;
     }
 
     public function index()
@@ -39,5 +44,16 @@ class MoviesController extends Controller
         $user = Auth::user();
         
         $this->movieService->markSeenForUser($movie, $user);
+    }
+
+    public function seenList(int $userId)
+    {
+        $user = $this->userService->find($userId);
+        
+        $movies = $this->movieService->getSeenList($user);
+
+        return response()->json(
+            fractal()->collection($movies, new MovieTransformer())
+        );
     }
 }

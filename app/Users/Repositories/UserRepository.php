@@ -2,6 +2,7 @@
 
 use App\Movies\Movie;
 use App\Users\User;
+use Illuminate\Support\Collection;
 
 interface UserRepository
 {
@@ -16,4 +17,6 @@ interface UserRepository
     public function create(array $attributes): User;
 
     public function markMovieSeen(User $user, Movie $movie): void;
+
+    public function getSeenList(User $user): Collection;
 }

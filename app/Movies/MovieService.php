@@ -2,7 +2,9 @@
 
 use App\Movies\Repositories\MovieRepository;
 use App\Users\Repositories\UserRepository;
+use App\Users\Seenable;
 use App\Users\User;
+use Illuminate\Support\Collection;
 use Tmdb\Model\Movie as TmdMovie;
 
 class MovieService
@@ -48,6 +50,20 @@ class MovieService
     public function markSeenForUser(Movie $movie, User $user): void
     {
         $this->userRepo->markMovieSeen($user, $movie);
+    }
+
+    public function getSeenList(User $user): Collection
+    {
+        $seenList = $this->userRepo->getSeenList($user);
+
+        $movies = $seenList->map(function (Seenable $seenable): Movie {
+            $movie = $this->movieRepo->find($seenable->getMovieId());
+            $movie = $this->addFullImagePaths($movie);
+            
+            return $movie;
+        });
+
+        return $movies;
     }
 
     protected function addFullImagePaths(Movie $movie): Movie
