@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Movies\Exceptions\AlreadySeenException;
 use App\Movies\MovieService;
 use App\Movies\Transformers\MovieTransformer;
 use App\Users\UserService;
@@ -42,8 +43,12 @@ class MoviesController extends Controller
     {
         $movie = $this->movieService->find($movieId);
         $user = Auth::user();
-        
-        $this->movieService->markSeenForUser($movie, $user);
+
+        try {
+            $this->movieService->markSeenForUser($movie, $user);
+        } catch (AlreadySeenException $e) {
+            // Silently fail
+        }
     }
 
     public function seenList(int $userId)

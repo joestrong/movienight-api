@@ -18,5 +18,7 @@ interface UserRepository
 
     public function markMovieSeen(User $user, Movie $movie): void;
 
+    public function hasBeenSeen(User $user, Movie $movie): bool;
+
     public function getSeenList(User $user): Collection;
 }

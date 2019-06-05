@@ -1,5 +1,6 @@
 <?php namespace App\Movies;
 
+use App\Movies\Exceptions\AlreadySeenException;
 use App\Movies\Repositories\MovieRepository;
 use App\Users\Repositories\UserRepository;
 use App\Users\Seenable;
@@ -49,7 +50,16 @@ class MovieService
 
     public function markSeenForUser(Movie $movie, User $user): void
     {
+        if ($this->hasBeenSeen($movie, $user)) {
+            throw new AlreadySeenException();
+        }
+        
         $this->userRepo->markMovieSeen($user, $movie);
+    }
+    
+    public function hasBeenSeen(Movie $movie, User $user): bool
+    {
+        return $this->userRepo->hasBeenSeen($user, $movie);
     }
 
     public function getSeenList(User $user): Collection

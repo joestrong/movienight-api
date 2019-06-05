@@ -7,6 +7,7 @@ use App\Users\Models\User as UserModel;
 use App\Users\Models\UserSeeable;
 use App\Users\Seenable;
 use App\Users\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 
@@ -84,6 +85,19 @@ class EloquentUserRepository implements UserRepository
             'seeable_type' => Movie::class,
             'seeable_id' => $movie->getId(),
         ]);
+    }
+    
+    public function hasBeenSeen(User $user, Movie $movie): bool
+    {
+        $userModel = $this->model
+            ->where('id', $user->getId())
+            ->whereHas('seeables', function (Builder $query) use ($movie) {
+                $query->where('seeable_type', Movie::class);
+                $query->where('seeable_id', $movie->getId());
+            })
+            ->first();
+        
+        return $userModel !== null;
     }
 
     public function getSeenList(User $user): Collection
