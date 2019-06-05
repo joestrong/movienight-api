@@ -8,6 +8,7 @@ class MovieTransformer extends TransformerAbstract
     public function transform(Movie $movie)
     {
         return [
+            'id' => $movie->getId(),
             'title' => $movie->getTitle(),
             'posterImage' => $movie->getPosterImage(),
             'backdropImage' => $movie->getBackdropImage(),

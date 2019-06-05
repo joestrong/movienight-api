@@ -26,6 +26,7 @@ class TmdbMovieRepository implements MovieRepository
             ->values()
             ->map(function (TmdMovie $data): Movie {
                 $movie = new Movie();
+                $movie->setId($data->getId());
                 $movie->setTitle($data->getTitle());
                 if ($data->getPosterImage()->getFilePath() !== null) {
                     $movie->setPosterImage(
