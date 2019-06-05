@@ -74,7 +74,11 @@ class EloquentUserRepository implements UserRepository
 
     public function markMovieSeen(User $user, Movie $movie): void
     {
-        $userModel = $this->model->findOrFail($user->getId());
+        try {
+            $userModel = $this->model->findOrFail($user->getId());
+        } catch (ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
 
         $userModel->seeables()->create([
             'seeable_type' => Movie::class,
@@ -84,7 +88,11 @@ class EloquentUserRepository implements UserRepository
 
     public function getSeenList(User $user): Collection
     {
-        $userModel = $this->model->findOrFail($user->getId());
+        try {
+            $userModel = $this->model->findOrFail($user->getId());
+        } catch (ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
 
         return $userModel->seeables->map(function (UserSeeable $userSeeable): Seenable {
             $seenable = new Seenable();
