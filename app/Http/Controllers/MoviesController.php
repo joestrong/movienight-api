@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Movies\MovieService;
 use App\Movies\Transformers\MovieTransformer;
+use Illuminate\Support\Facades\Auth;
 
 class MoviesController extends Controller
 {
@@ -30,5 +31,13 @@ class MoviesController extends Controller
         return response()->json(
             fractal()->item($movie, new MovieTransformer())
         );
+    }
+
+    public function postSeen(int $movieId)
+    {
+        $movie = $this->movieService->find($movieId);
+        $user = Auth::user();
+        
+        $this->movieService->markSeenForUser($movie, $user);
     }
 }

@@ -1,15 +1,21 @@
 <?php namespace App\Movies;
 
 use App\Movies\Repositories\MovieRepository;
+use App\Users\Repositories\UserRepository;
+use App\Users\User;
 use Tmdb\Model\Movie as TmdMovie;
 
 class MovieService
 {
     protected $movieRepo;
+    protected $userRepo;
     
-    public function __construct(MovieRepository $movieRepo)
-    {
+    public function __construct(
+        MovieRepository $movieRepo,
+        UserRepository $userRepo
+    ) {
         $this->movieRepo = $movieRepo;
+        $this->userRepo= $userRepo;
     }
 
     public function find(int $id): Movie
@@ -38,5 +44,10 @@ class MovieService
         $imageConfig = $this->movieRepo->getConfig()->getImages();
 
         return $imageConfig['secure_base_url'] . $imageConfig['poster_sizes'][4];
+    }
+
+    public function markSeenForUser(Movie $movie, User $user): void
+    {
+        $this->userRepo->markMovieSeen($user, $movie);
     }
 }

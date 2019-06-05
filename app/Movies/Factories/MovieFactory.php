@@ -3,7 +3,8 @@
 use App\Movies\Movie;
 use Tmdb\Model\Movie as TmdMovie;
 
-class MovieFactory{
+class MovieFactory
+{
     public function make(TmdMovie $data): Movie
     {
         $movie = new Movie();
