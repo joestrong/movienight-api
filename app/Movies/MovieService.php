@@ -1,10 +1,12 @@
 <?php namespace App\Movies;
 
 use App\Movies\Exceptions\AlreadySeenException;
+use App\Movies\Exceptions\NotSeenException;
 use App\Movies\Repositories\MovieRepository;
 use App\Users\Repositories\UserRepository;
 use App\Users\Seenable;
 use App\Users\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Tmdb\Model\Movie as TmdMovie;
 
@@ -55,6 +57,15 @@ class MovieService
         }
         
         $this->userRepo->markMovieSeen($user, $movie);
+    }
+    
+    public function removeSeenForUser(Movie $movie, User $user): void
+    {
+        if (!$this->hasBeenSeen($movie, $user)) {
+            throw new NotSeenException();
+        }
+
+        $this->userRepo->deleteMovieSeen($user, $movie);
     }
     
     public function hasBeenSeen(Movie $movie, User $user): bool

@@ -17,6 +17,8 @@ interface UserRepository
     public function create(array $attributes): User;
 
     public function markMovieSeen(User $user, Movie $movie): void;
+    
+    public function deleteMovieSeen(User $user, Movie $movie): void;
 
     public function hasBeenSeen(User $user, Movie $movie): bool;
 

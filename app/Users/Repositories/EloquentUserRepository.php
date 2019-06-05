@@ -86,7 +86,21 @@ class EloquentUserRepository implements UserRepository
             'seeable_id' => $movie->getId(),
         ]);
     }
-    
+
+    public function deleteMovieSeen(User $user, Movie $movie): void
+    {
+        try {
+            $userModel = $this->model->findOrFail($user->getId());
+        } catch (ModelNotFoundException $e) {
+            throw new UserNotFoundException();
+        }
+
+        $userModel->seeables()
+            ->where('seeable_type', Movie::class)
+            ->where('seeable_id', $movie->getId())
+            ->delete();
+    }
+
     public function hasBeenSeen(User $user, Movie $movie): bool
     {
         $userModel = $this->model
