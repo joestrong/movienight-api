@@ -20,7 +20,11 @@ class MovieService
 
     public function find(int $id): Movie
     {
-        return $this->movieRepo->find($id);
+        $movie = $this->movieRepo->find($id);
+
+        $movie = $this->addFullImagePaths($movie);
+
+        return $movie;
     }
 
     public function getTop(int $limit = 10)
@@ -28,12 +32,7 @@ class MovieService
         $movies = $this->movieRepo->getTop($limit);
 
         return $movies->map(function (Movie $movie): Movie {
-            if ($movie->getPosterImage() !== null) {
-                $movie->setPosterImage($this->getPosterPath() . $movie->getPosterImage());
-            }
-            if ($movie->getBackdropImage() !== null) {
-                $movie->setBackdropImage($this->getPosterPath() . $movie->getBackdropImage());
-            }
+            $movie = $this->addFullImagePaths($movie);
 
             return $movie;
         });
@@ -49,5 +48,17 @@ class MovieService
     public function markSeenForUser(Movie $movie, User $user): void
     {
         $this->userRepo->markMovieSeen($user, $movie);
+    }
+
+    protected function addFullImagePaths(Movie $movie): Movie
+    {
+        if ($movie->getPosterImage() !== null) {
+            $movie->setPosterImage($this->getPosterPath() . $movie->getPosterImage());
+        }
+        if ($movie->getBackdropImage() !== null) {
+            $movie->setBackdropImage($this->getPosterPath() . $movie->getBackdropImage());
+        }
+
+        return $movie;
     }
 }
