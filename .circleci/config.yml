@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/php:7.2
     steps:
@@ -16,4 +16,4 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-      - run: ./vendor/bin/phpunit
+      - run: composer test
