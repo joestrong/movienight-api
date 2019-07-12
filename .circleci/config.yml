@@ -17,3 +17,8 @@ jobs:
           paths:
             - ./vendor
       - run: composer test
+workflows:
+  version: 2
+  test-all:
+    jobs:
+      - test
