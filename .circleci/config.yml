@@ -1,4 +1,10 @@
-version: 2
+version: 2.1
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: joestrong/movienight-api
+    docker:
+      - image: circleci/buildpack-deps:stretch
 jobs:
   test:
     docker:
@@ -6,17 +12,59 @@ jobs:
     steps:
       - checkout
       - run: sudo apt update
-      - run: sudo docker-php-ext-install zip
+      - restore_cache:
+          keys:
+            - v1-devdependencies-{{ checksum "composer.lock" }}
+            - v1-devdependencies-
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v1-devdependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - run: composer test
+  build:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - checkout
+      - run: sudo apt update
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "composer.lock" }}
             - v1-dependencies-
-      - run: composer install -n --prefer-dist
+      - run: composer install -n --prefer-dist --no-dev
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-      - run: composer test
+  docker-build:
+    executor: docker-publisher
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:latest .
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+  docker-publish:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish Latest image
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $IMAGE_NAME:latest
 workflows:
   version: 2
   test-all:
@@ -25,3 +73,26 @@ workflows:
           filters:
             branches:
               only: develop
+  build-master:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: feature/circle-ci
+      - build:
+          filters:
+            branches:
+              only: feature/circle-ci
+      - docker-build:
+          requires:
+            - build
+          filters:
+            branches:
+              only: feature/circle-ci
+      - docker-publish:
+          requires:
+            - docker-build
+          filters:
+            branches:
+              only: feature/circle-ci
+
