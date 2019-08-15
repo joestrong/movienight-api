@@ -38,6 +38,8 @@ jobs:
           paths:
             - ./vendor
   docker-build:
+    docker:
+      - image: circleci/php:7.2
     executor: docker-publisher
     steps:
       - setup_remote_docker
