@@ -1,13 +1,23 @@
-app:
-  ports:
-   - 80:80
-php:
-  links:
-   - mysql
-mysql:
-  container_name: movienight-mysql
-  image: mysql:5
-  environment:
-   - MYSQL_ROOT_PASSWORD=%4VZAs-X@vfc)sa1
-  ports:
-   - "3306:3306"
+version: "3.7"
+services:
+  app:
+    ports:
+     - 80:80
+    volumes:
+      - ./:/web
+  php:
+    image: movienight-php-dev
+    build:
+      dockerfile: ./docker/php/Dockerfile-dev
+      context: .
+    links:
+     - mysql
+    volumes:
+      - ./:/web
+  mysql:
+    container_name: movienight-mysql
+    image: mysql:5
+    environment:
+     - MYSQL_ROOT_PASSWORD=%4VZAs-X@vfc)sa1
+    ports:
+     - "3306:3306"

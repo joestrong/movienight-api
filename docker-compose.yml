@@ -1,12 +1,10 @@
-app:
-  container_name: movienight
-  build: ./docker/app
-  links:
-   - php
-  volumes:
-   - .:/web
-php:
-  container_name: movienight-php
-  build: ./docker/php
-  volumes:
-   - .:/web
+version: "3.7"
+services:
+  app:
+    container_name: movienight
+    image: docker.joestrong.co.uk/movienight-app
+    links:
+     - php
+  php:
+    container_name: movienight-php
+    image: docker.joestrong.co.uk/movienight-php

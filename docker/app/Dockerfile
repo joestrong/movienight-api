@@ -1,5 +1,7 @@
 FROM nginx:latest
 
-COPY ./nginx-host.conf /etc/nginx/conf.d/default.conf
+COPY docker/app/nginx-host.conf /etc/nginx/conf.d/default.conf
+
+COPY ./ /web
 
 CMD ["nginx", "-g", "daemon off;"]
