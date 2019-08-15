@@ -41,6 +41,12 @@ jobs:
     executor: docker-publisher
     steps:
       - setup_remote_docker
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "composer.lock" }}
+            - v1-dependencies-
+      - run: composer install -n --prefer-dist --no-dev
       - run:
           name: Build Docker image
           command: docker-compose -f docker-compose.build.yml build
