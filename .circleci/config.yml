@@ -43,7 +43,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Docker image
-          command: docker-compose -f docker-compose.build.yml
+          command: docker-compose -f docker-compose.build.yml build
       - run:
           name: Archive App Docker image
           command: docker save -o movienight-app.tar docker.joestrong.co.uk/movienight-app
