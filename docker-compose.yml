@@ -1,10 +1,8 @@
 version: "3.7"
 services:
   app:
-    container_name: movienight
-    image: docker.joestrong.co.uk/movienight-app
-    links:
-     - php
+    container_name: movienight-app
+    image: docker.joestrong.co.uk/movienight-app:latest
   php:
     container_name: movienight-php
-    image: docker.joestrong.co.uk/movienight-php
+    image: docker.joestrong.co.uk/movienight-php:latest
