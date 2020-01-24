@@ -1,0 +1,26 @@
+name: Deploy
+# This workflow is triggered on pushes to the repository.
+on:
+  push:
+    branches:
+      - feature/github-actions
+
+jobs:
+  build:
+    name: Composer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+  buildImage:
+    name: Build Image
+    runs-on: ubuntu-latest
+    steps:
+      - echo "test"
+  deploy:
+    name: Deploy to K8
+    steps:
+      - uses: steebchen/kubectl@v1.0.0
