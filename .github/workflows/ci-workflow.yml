@@ -22,5 +22,7 @@ jobs:
       - echo "test"
   deploy:
     name: Deploy to K8
+    runs-on: ubuntu-latest
     steps:
       - uses: steebchen/kubectl@v1.0.0
+      - kubectl --version
