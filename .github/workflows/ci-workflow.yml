@@ -19,10 +19,10 @@ jobs:
     name: Build Image
     runs-on: ubuntu-latest
     steps:
-      - echo "test"
+      - run: echo "test"
   deploy:
     name: Deploy to K8
     runs-on: ubuntu-latest
     steps:
       - uses: steebchen/kubectl@v1.0.0
-      - kubectl --version
+      - run: kubectl --version
