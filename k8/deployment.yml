@@ -23,3 +23,6 @@ spec:
           image: docker.joestrong.co.uk/movienight-php:latest
           ports:
             - containerPort: 9000
+          envFrom:
+            - secretRef:
+                name: movienight-env
