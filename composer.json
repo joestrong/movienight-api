@@ -39,6 +39,5 @@
         "test": "phpunit && composer cs"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "optimize-autoloader": true
+    "prefer-stable": true
 }
