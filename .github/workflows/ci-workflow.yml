@@ -21,22 +21,15 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
       - uses: docker://tmaier/docker-compose:latest
-        run: |
-          docker-compose -f docker-compose.build.yml build
-          docker push docker.joestrong.co.uk/movienight-app:latest
+        args: -f docker-compose.build.yml build
+      - run: docker push docker.joestrong.co.uk/movienight-app:latest
   deploy:
     name: Deploy to K8
     needs: buildImage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - run: echo -n "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > ca.cert
       - name: Push to K8
-        uses: docker://atlassian/pipelines-kubectl:1.16.3
-        run: |
-          echo -n "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > ca.cert
-          kubectl config set-cluster $KUBERNETES_CLUSTER --server=$KUBERNETES_SERVER --certificate-authority=ca.cert
-          kubectl config set-context my-context --cluster=$KUBERNETES_CLUSTER
-          kubectl config use-context my-context
-          kubectl apply --token=$KUBERNETES_TOKEN -f k8/deployment.yml
-          kubectl apply --token=$KUBERNETES_TOKEN -f k8/service.yml
-
+        uses: docker://bitnami/kubectl:1.16
+        args: apply --server=$KUBERNETES_SERVER --certificate-authority=ca.cert --cluster=$KUBERNETES_CLUSTER --token=$KUBERNETES_TOKEN -f k8/*.yml
