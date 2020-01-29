@@ -26,7 +26,7 @@ jobs:
       - run: docker push docker.joestrong.co.uk/movienight-app:latest
   deploy:
     name: Deploy to K8
-    needs: buildImage
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
