@@ -11,40 +11,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Cache composer dependancies
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
       - name: Validate composer.json and composer.lock
         run: composer validate
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: composer-vendor
-          path: vendor
-  buildImage:
-    name: Build Image
-    needs: build
-    runs-on: ubuntu-latest
-    container: tmaier/docker-compose:latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Download artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: composer-vendor
-      - run: docker-compose -f docker-compose.build.yml build
-      - run: docker push docker.joestrong.co.uk/movienight-app:latest
+      - uses: docker://tmaier/docker-compose:latest
+        run: |
+          docker-compose -f docker-compose.build.yml build
+          docker push docker.joestrong.co.uk/movienight-app:latest
   deploy:
     name: Deploy to K8
     needs: buildImage
     runs-on: ubuntu-latest
-    container: atlassian/pipelines-kubectl:1.16.3
     steps:
       - uses: actions/checkout@v1
-      - run: echo -n "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > ca.cert
-      - run: kubectl config set-cluster $KUBERNETES_CLUSTER --server=$KUBERNETES_SERVER --certificate-authority=ca.cert
-      - run: kubectl config set-context my-context --cluster=$KUBERNETES_CLUSTER
-      - run: kubectl config use-context my-context
-      - run: kubectl apply --token=$KUBERNETES_TOKEN -f k8/deployment.yml
-      - run: kubectl apply --token=$KUBERNETES_TOKEN -f k8/service.yml
-
+      - name: Push to K8
+        uses: docker://atlassian/pipelines-kubectl:1.16.3
+        run: |
+          echo -n "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > ca.cert
+          kubectl config set-cluster $KUBERNETES_CLUSTER --server=$KUBERNETES_SERVER --certificate-authority=ca.cert
+          kubectl config set-context my-context --cluster=$KUBERNETES_CLUSTER
+          kubectl config use-context my-context
+          kubectl apply --token=$KUBERNETES_TOKEN -f k8/deployment.yml
+          kubectl apply --token=$KUBERNETES_TOKEN -f k8/service.yml
 
