@@ -15,14 +15,34 @@ jobs:
         run: composer validate
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: composer-vendor
+          path: vendor
   buildImage:
     name: Build Image
     runs-on: ubuntu-latest
+    container: tmaier/docker-compose:latest
     steps:
-      - run: echo "test"
+      - uses: actions/checkout@v1
+      - name: Download artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: composer-vendor
+      - run: docker-compose -f docker-compose.build.yml build
+      - run: docker push docker.joestrong.co.uk/movienight-app:latest
   deploy:
     name: Deploy to K8
     runs-on: ubuntu-latest
+    container: atlassian/pipelines-kubectl:1.16.3
     steps:
-      - uses: steebchen/kubectl@v1.0.0
-      - run: kubectl --version
+      - uses: actions/checkout@v1
+      - run: echo -n "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > ca.cert
+      - run: kubectl config set-cluster $KUBERNETES_CLUSTER --server=$KUBERNETES_SERVER --certificate-authority=ca.cert
+      - run: kubectl config set-context my-context --cluster=$KUBERNETES_CLUSTER
+      - run: kubectl config use-context my-context
+      - run: kubectl apply --token=$KUBERNETES_TOKEN -f k8/deployment.yml
+      - run: kubectl apply --token=$KUBERNETES_TOKEN -f k8/service.yml
+
+
