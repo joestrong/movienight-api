@@ -22,6 +22,7 @@ jobs:
           path: vendor
   buildImage:
     name: Build Image
+    needs: build
     runs-on: ubuntu-latest
     container: tmaier/docker-compose:latest
     steps:
@@ -34,6 +35,7 @@ jobs:
       - run: docker push docker.joestrong.co.uk/movienight-app:latest
   deploy:
     name: Deploy to K8
+    needs: buildImage
     runs-on: ubuntu-latest
     container: atlassian/pipelines-kubectl:1.16.3
     steps:
