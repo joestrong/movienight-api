@@ -24,6 +24,11 @@ jobs:
     name: Deploy to K8
     needs: build
     runs-on: ubuntu-latest
+    env:
+      KUBERNETES_CLUSTER: ${{ secrets.KUBERNETES_CLUSTER }}
+      KUBERNETES_CLUSTER_CERTIFICATE: ${{ secrets.KUBERNETES_CLUSTER_CERTIFICATE }}
+      KUBERNETES_SERVER: ${{ secrets.KUBERNETES_SERVER }}
+      KUBERNETES_TOKEN: ${{ secrets.KUBERNETES_TOKEN }}
     steps:
       - uses: actions/checkout@v1
       - run: echo -n "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > ca.cert
