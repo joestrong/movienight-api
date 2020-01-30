@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movienight
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: movienight
+  template:
+    metadata:
+      labels:
+        app: movienight
+    spec:
+      containers:
+        - name: app
+          image: docker.joestrong.co.uk/movienight-app:latest
+          ports:
+            - containerPort: 80
+        - name: php
+          image: docker.joestrong.co.uk/movienight-php:latest
+          ports:
+            - containerPort: 9000
+          envFrom:
+            - secretRef:
+                name: movienight-env

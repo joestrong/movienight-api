@@ -1,8 +1,13 @@
 version: "3.7"
 services:
   app:
-    container_name: movienight-app
     image: docker.joestrong.co.uk/movienight-app:latest
+    build:
+      dockerfile: ./docker/app/Dockerfile
+      context: .
   php:
-    container_name: movienight-php
     image: docker.joestrong.co.uk/movienight-php:latest
+    build:
+      dockerfile: ./docker/php/Dockerfile
+      context: .
+

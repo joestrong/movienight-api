@@ -34,9 +34,10 @@
         "post-root-package-install": [
             "php -r \"copy('.env.example', '.env');\""
         ],
-        "cs-fix": "php-cs-fixer fix app"
+        "cs": "php-cs-fixer fix --dry-run app",
+        "cs-fix": "php-cs-fixer fix app",
+        "test": "phpunit && composer cs"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "optimize-autoloader": true
+    "prefer-stable": true
 }

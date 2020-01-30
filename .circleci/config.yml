@@ -1,0 +1,114 @@
+version: 2.1
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: joestrong/movienight-api
+    docker:
+      - image: circleci/buildpack-deps:stretch
+jobs:
+  test:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - checkout
+      - run: sudo apt update
+      - restore_cache:
+          keys:
+            - v1-devdependencies-{{ checksum "composer.lock" }}
+            - v1-devdependencies-
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v1-devdependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - run: composer test
+  build:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - checkout
+      - run: sudo apt update
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "composer.lock" }}
+            - v1-dependencies-
+      - run: composer install -n --prefer-dist --no-dev
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+  docker-build:
+    docker:
+      - image: circleci/php:7.2
+    executor: docker-publisher
+    steps:
+      - setup_remote_docker
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "composer.lock" }}
+            - v1-dependencies-
+      - run: composer install -n --prefer-dist --no-dev
+      - run:
+          name: Build Docker image
+          command: docker-compose -f docker-compose.build.yml build
+      - run:
+          name: Archive App Docker image
+          command: docker save -o movienight-app.tar docker.joestrong.co.uk/movienight-app
+      - run:
+          name: Archive PHP Docker image
+          command: docker save -o movienight-php.tar docker.joestrong.co.uk/movienight-php
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./movienight-app.tar
+            - ./movienight-php.tar
+  docker-publish:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived App Docker image
+          command: docker load -i /tmp/workspace/movienight-app.tar
+      - run:
+          name: Load archived PHP Docker image
+          command: docker load -i /tmp/workspace/movienight-php.tar
+      - run:
+          name: Publish Latest App image
+          command: docker push docker.joestrong.co.uk/movienight-app:latest
+      - run:
+          name: Publish Latest PHP image
+          command: docker push docker.joestrong.co.uk/movienight-php:latest
+workflows:
+  version: 2
+  test-all:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: develop
+  build-master:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: feature/circle-ci
+      - build:
+          filters:
+            branches:
+              only: feature/circle-ci
+      - docker-build:
+          requires:
+            - build
+          filters:
+            branches:
+              only: feature/circle-ci
+      - docker-publish:
+          requires:
+            - docker-build
+          filters:
+            branches:
+              only: feature/circle-ci
+
