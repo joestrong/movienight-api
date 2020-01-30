@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Push to K8
       - run: echo -n "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 -d > ca.cert
       - run: kubectl config set-cluster $KUBERNETES_CLUSTER --server=$KUBERNETES_SERVER --certificate-authority=ca.cert
       - run: kubectl config set-context my-context --cluster=$KUBERNETES_CLUSTER
